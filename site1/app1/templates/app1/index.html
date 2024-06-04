@@ -1,0 +1,26 @@
+{% extends 'app1/base.html' %}
+
+{% block content %}
+<ul class="list-articles">
+<!--	вместо post object_list, когда была вместо класса функция в views-->
+	{% for p in posts %}
+			<div class = article_l>
+				{% if p.photo %}
+					<p><img class="img-article-left thumb" src="{{p.photo.url}}"></p>
+				{% endif %}
+				<li><h4>{{p.title}}</h4>
+				<p>{{p.description}}</p>
+
+	{% autoescape on %}
+<!--linebrakes d jinja используется, чтобы разбить красиво кониент на строки и абзацы				-->
+	{{p.content|linebreaks|truncatewords:50}}
+	{% endautoescape %}
+			<div class="clear"></div>
+				<div class="link-read">
+			<p class="link-read-post"><a href="{{ p.get_absolute_url }}">подробнее</a></p>
+					</div>
+			</li>
+				</div>
+	{% endfor %}
+</ul>
+{% endblock  %}

@@ -1,0 +1,129 @@
+{% load static %}
+<!--теперь можно не париться и не создавать переменную category в views-->
+{% load app1_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{title}}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link type="text/css" href="{% static 'app1/css/style-f.css' %}" rel="stylesheet" />
+	<link type="text/css" href="{% static 'app1/css/left-nav-style.css' %}" rel="stylesheet" />
+	<link type="text/css" href="{% static 'app1/css/styles.css' %}" rel="stylesheet" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
+</head>
+<body>
+
+<!-- Начало Sidebar'a слева -->
+
+<!-- Загружаем объект(тэг) , чтобы работать с кэшем -->
+	<!-- {% load cache %} -->
+<input type="checkbox" id="nav-toggle" hidden>
+<nav class="nav">
+	<label for="nav-toggle" class="nav-toggle" onclick></label>
+<!--	Формируем ссылку, на переменную, которая будет ссылаться на тег	-->
+	<ul id="leftchapters">
+
+	<!-- Кэширование на уровне шаблона -->
+	<!-- тэг sidebar По нему будет храниться кэш -->
+	<!-- {% cache 60 sidebar %} -->
+	{% if cat_selected == 0 %}
+		<li class = 'selected'> Все категории </li>
+	{% else %}
+		<li><a href="{% url 'home' %}"> Все категории </a> </li>
+	{% endif %}
+
+	{% for c in cats %}
+<!--		Выводятся те рубрики, у которых есть хотя бы один пост-->
+	{% if c.get_posts__count > 0 %}
+		{% if c.pk == cat_selected %}
+			<li class="selected">{{c.name}}</li>
+		{% else %}
+			<li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
+		{% endif %}
+	{% endif %}
+	{% endfor %}
+	<!-- {% endcache %} -->
+
+<!--		этот тег добавляет сюда файл list_categories, мы это прописали в templatetags-->
+<!--		фильтрация по имени и передаем 0 с посощью cat_selected-->
+<!--	{% show_categories  cat_selected=cat_selected %}-->
+
+	</ul>
+</nav>
+<!-- Конец Sidebar'а -->
+
+
+<table class="table-page" border=0 cellpadding="0" cellspacing="0">
+<tr><td valign=top>
+
+{% block mainmenu %}
+		<div class="header">
+			<ul id="mainmenu" class="mainmenu">
+			{% if request.user.is_authenticated %}
+				<li>{{ user.username }} | <a href="{% url 'logout' %}">Выйти</a></li>	
+			{% else %}
+				<li><a href="{% url 'register' %}">Регистрация</a> | <a href="{% url 'login' %}">Войти</a></li>
+			{% endif %}
+{% for m in menu %}
+			<li><a href="{% url m.url_name %}">{{ m.title }}</a></li>
+{% endfor %}
+<!--Тэг для показа меню, находится в templatetags-->
+<!--{% show_menu %}-->
+			</ul>
+			<div class="clear"></div>
+		</div>
+{% endblock mainmenu %}
+	<div class="mask-content"></div>
+
+
+<td valign="top" class="content cont">
+	<!-- Хлебные крошки -->
+	{% block breadcrumbs %}
+	{% endblock %}
+
+<!-- Блок контента -->
+	<div class="content-text">
+
+{% block content %}
+<!--контент-->
+{% endblock %}
+
+	{% if page_obj.has_other_pages %}
+		<nav class="list-pages">
+			<ul>
+			{% if page_obj.has_previous %}
+				<li class="page-num">
+					<a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+				</li>
+			{% endif %}
+			<!--paginator и page_obj автоматически передаются в шаблон-->
+			{% for p in paginator.page_range %}
+				{% if page_obj.number == p %}
+					<li class ="page-num selected-pag-page">{{ p }}  </li>
+<!--				задаем границы (диапазон) показа страниц, чтобы сразу много не показывалось в пагинации-->
+				{% elif p >= page_obj.number|add:-1 and p <= page_obj.number|add:2 %}
+					<li class="page-num">
+					<!--прописываем ссылку и передаем, какую отображать и отображаем номер странички-->
+					<a href="?page={{ p }}">{{ p }}</a>
+					</li>
+				{% endif %}
+			{% endfor %}
+				{% if page_obj.has_next %}
+				<li class="page-num">
+					<a href="?page={{ page_obj.next_page_number }}">&gt;</a>
+				{% endif %}
+			</ul>
+		</nav>
+		{% endif %}
+	</div>
+<!-- Конец блока контента -->
+
+</td></tr></table>
+</td></tr>
+<!-- Footer -->
+<tr><td valign=top>
+</td></tr></table>
+<!-- Конец footer'а и страницы -->
+</body>
+</html>

@@ -1,0 +1,24 @@
+{%extends 'app1/base.html'%}
+
+{%block content %}
+<h1>{{title}}</h1>
+
+<form action="{% url 'add_page' %}" method="post" enctype="multipart/form-data">
+<!--    enctype сдужит для корректного отображения фотографии если они будут передаваться-->
+    <!--    для защиты от csrf атак чтобы данные не перехватили-->
+    {% csrf_token %}
+<!--  импортирует нашу форму из form и отображает поля формы через тэг абзаца p, вместо h1 например -->
+<!--    {{ form.as_p }}-->
+
+<!--    выводится общая ошибка, если не добавилось в базу данных-->
+    <div class="form-error">{{ form.non_field_errors }}</div>
+
+    {% for f in form %}
+        <p><label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}</p>
+        <div class="form-error">{{ f.errors }}</div>
+    {% endfor %}
+
+    <button type="submit">Добавить</button>
+</form>
+
+{%endblock%}

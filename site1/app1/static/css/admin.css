@@ -1,0 +1,19 @@
+#header,.module caption, #theme-icon-when-dark {
+    background-color: #16a085;
+}
+/* сверху соединили сразу два тэга для удобства(два разных элемента) */
+/* селктор называется штука  по которой стили привязываем */
+.theme-toggle svg.theme-icon-when-light {
+    color:  #16a085;
+}
+.theme-toggle svg.theme-icon-when-dark {
+    color:  #16a085;
+}
+
+.theme-toggle svg.theme-icon-when-auto {
+    color:  #16a085;
+}
+
+div.breadcrumbs{
+    background: #156253;
+}
